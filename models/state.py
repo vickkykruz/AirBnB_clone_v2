@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 import os
 from models.city import City
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """ State class """
     
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
@@ -37,4 +37,5 @@ class State(BaseModel):
                 if "City" in key:
                     if obj.state_id == self.id:
                         listCities.append(obj)
+
             return listCities

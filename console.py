@@ -2,8 +2,9 @@
 """ Console Module """
 import cmd
 import sys
+import os
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -25,8 +26,17 @@ class HBNBCommand(cmd.Cmd):
                'State': State,
                'City': City,
                'Amenity': Amenity,
-               'Review': Review
-              }
+               'Review': Review}
+    
+    CLSSES = (
+        'Amenity',
+        'BaseModel',
+        'User',
+        'Place',
+        'State',
+        'City',
+        'Review')
+
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
              'number_rooms': int,
