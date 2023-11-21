@@ -13,7 +13,7 @@ class State(BaseModel, Base):
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         from models.city import City
         
-        __tablename__ == "states"
+        __tablename__ = "states"
         
         name = Column(
             String(128),
