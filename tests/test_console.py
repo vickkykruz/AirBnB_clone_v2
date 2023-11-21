@@ -28,7 +28,7 @@ class TestCommand(unittest.TestCase):
 
     @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', "Not FileStorage")
     def test_create_fs(self):
-        """test the create command"""
+        """test for the create command"""
         storage = FileStorage()
         storage.reload()
         opt = r'[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -110,7 +110,7 @@ class TestCommand(unittest.TestCase):
         self.assertEqual(f.getvalue(), opt)
 
     def testPycodeStyle(self):
-        """Pycodestyle test for console.py"""
+        """Pycodestyle test for console"""
         style = pycodestyle.StyleGuide(quiet=True)
         p = style.check_files(['console.py'])
         self.assertEqual(p.total_errors, 0, "fix pep8")
