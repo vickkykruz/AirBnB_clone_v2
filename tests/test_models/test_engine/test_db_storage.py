@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Test module for the Database storage"""
+""" Test module for the Database storage """
 
 import unittest
 import pycodestyle
@@ -7,10 +7,10 @@ from models.engine.db_storage import DBStorage
 
 
 class TestDBStorage(unittest.TestCase):
-    """ Clas TestDBStorage for testing the database storage"""
+    """ Class TestDBStorage for testing the database storage"""
     
     def testPycodeStyle(self):
-        """Test for pycodestyle compliancy in DBStorage"""
+        """Test for the pycodestyle compliancy in DBStorage"""
         style = pycodestyle.StyleGuide(quiet=True)
         p = style.check_files(['models/engine/db_storage.py'])
         self.assertEqual(p.total_errors, 0, "fix pep8")
