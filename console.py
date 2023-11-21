@@ -100,7 +100,7 @@ class HBNBCommand(cmd.Cmd):
                         # _args = _args.replace('\"', '')
             line = ' '.join([_cmd, _cls, _id, _args])
 
-        except Exception as mess:
+        except Exception as poop:
             pass
         finally:
             return line
@@ -109,7 +109,7 @@ class HBNBCommand(cmd.Cmd):
         """Prints if isatty is false"""
 
         if not sys.__stdin__.isatty():
-            print('(hbnb) ')
+            print("(hbnb) ")
             sys.exit()
 
         return stop
@@ -128,8 +128,6 @@ class HBNBCommand(cmd.Cmd):
         """ Handles EOF to exit program """
         
         return True
-        # print()
-        # exit()
 
     def help_EOF(self):
         """ Prints the help documentation for EOF """
@@ -207,7 +205,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            print(storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
