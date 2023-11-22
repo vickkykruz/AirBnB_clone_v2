@@ -7,7 +7,7 @@ from sqlalchemy import Integer, String, Column, ForeignKey, Float
 
 
 class Review(BaseModel, Base):
-    """ Review classto store review information """
+    """ Review class to store review information """
     
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         
