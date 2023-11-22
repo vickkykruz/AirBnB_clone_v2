@@ -161,6 +161,6 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 <p>This project was done and implemented by the following Software Enginners</p>
 
 1. Edward Victor Chukwuemeka
-2. Johnson Adeola
+2. Johnson Adeola (adeola.johnson.37@gmail.com)
 
 <p align="center">ALX Africa</p>
