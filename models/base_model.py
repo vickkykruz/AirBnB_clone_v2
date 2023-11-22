@@ -18,7 +18,7 @@ else:
 
 
 class BaseModel:
-    """A base class for all hbnb models"""
+    """A base class for all hbnb models """
     
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         id = Column(
