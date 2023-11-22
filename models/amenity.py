@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 
 
 class Amenity(BaseModel, Base):
-    """ This is amenity method of the BaseModel"""
+    """ This is amenity method of the BaseModel """
     
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         from models.place import place_amenity
