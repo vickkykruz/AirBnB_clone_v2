@@ -11,7 +11,7 @@ fi
 sudo mkdir -p /data/web_static/releases/test/ /data/web_static/shared/
 
 # Create the fake HTML File
-echo "<html>\n\t<head>\n\t</head>\n\t<body>\n\t<h1>Holberton School</h1>\n\t</body>\n\t</html>" | sudo tee /data/web_static/releases/test/index.html
+echo -e "<html>\n\t<head>\n\t</head>\n\t<body>\n\t<h1>Holberton School</h1>\n\t</body>\n\t</html>" | sudo tee /data/web_static/releases/test/index.html
 
 # Remove the existing symbolic link if it exist
 if [ -L /data/web_static/current ]; then
