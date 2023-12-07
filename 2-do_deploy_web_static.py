@@ -18,12 +18,44 @@ def do_pack():
         correctly
     """
 
-    local("mkdir -p versions")
     date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archived_fab_path = "versions/web_static_{}.tgz".format(date)
-    tgz_archive = local("tar -cvzf {} web_static".format(archived_fab_path))
+    filename = "web_static_{}.tgz".format(date)
+    archive_path = "versions/{}".format(filename)
 
-    if tgz_archive.succeeded:
-        return archived_fab_path
-    else:
+    print("Packing web_static to {}".format(archive_path))
+
+    local("mkdir -p versions")
+    result = local("tar -cvzf {} web_static".format(archive_path))
+
+    if result.failed:
         return None
+
+    print("Successfully packed web_static to {}".format(archive_path))
+
+
+def do_deploy(archive_path):
+    """ This is a function that distrubutes the archive to the webserver """
+
+    if not isfile(archive_path):
+        return False
+
+    print("Deploying new version")
+
+    archive_name = archive_path.split("/")[-1]
+    folder_name = archive_name[: -4]
+    dir_path = "/data/web_static/releases/{}".format(folder_name)
+
+    put(archive_path, "/tmp/")
+    run("mkdir -p {}".format(dir_path))
+    result = run("tar -xzf /tmp/{} -C {}".format(archive_name, dir_path))
+
+    if result.failed:
+        return False
+
+    run("cp -r {}/web_static/* {}".format(dir_path, dir_path))
+    run("rm -rf /tmp/{} {}/web_static".format(archive_name, dir_path))
+    run("rm -rf /data/web_static/current")
+    run("ln -s {} /data/web_static/current".format(dir_path))
+
+    print("New version deployed!")
+    return True
