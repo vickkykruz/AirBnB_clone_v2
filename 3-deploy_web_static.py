@@ -65,10 +65,7 @@ def deploy():
     """ This is a function that perform thefull deployment from generating an
         archive in deploying
     """
-
     file_name = do_pack()
-
-    if not file_name:
+    if file_name is None:
         return False
-
     return do_deploy(filename)
