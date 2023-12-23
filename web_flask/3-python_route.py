@@ -43,6 +43,7 @@ def c_text(text):
     """ This is a function that return the page and display C then the <text>
         variable
     """
+    text = text.replace('_', ' ')
     return f'C {escape(text)}'
 
 
@@ -52,8 +53,9 @@ def python_text(text="is cool"):
     """ This is a fuction that return the page and display Python then the
         <text> variable
     """
+    text = text.replace('_', ' ')
     return f'Python {escape(text)}'
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

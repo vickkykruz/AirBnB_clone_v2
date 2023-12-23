@@ -36,6 +36,7 @@ def hbnb():
 @app.route("/c/<text>", strict_slashes=False)
 def c_text(text):
     """This function return C followed by the text to the user """
+    text = text.replace('_', ' ')
     return f'C {escape(text)}'
 
 
