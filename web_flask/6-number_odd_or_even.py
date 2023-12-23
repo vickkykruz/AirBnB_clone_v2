@@ -14,6 +14,9 @@ Write a script that starts a Flask web application:
         => /number/<n>: display “n is a number” only if n is an integer
         => /number_template/<n>: display a HTML page only if n is an integer:
             => H1 tag: “Number: n” inside the tag BODY
+        => /number_odd_or_even/<n>: display a HTML page only if n is an
+            integer:
+            => H1 tag: “Number: n is even|odd” inside the tag BODY
     => You must use the option strict_slashes=False in your route definition
 """
 
@@ -69,6 +72,14 @@ def number_n(n):
 def number_template(n):
     """ This is a function that return the html and the n variable passes """
     return render_template('5-number.html', n=n)
+
+
+@app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
+def number_odd_or_even(n):
+    """ This is a function that return the number_ood_or_even and the n
+        variable passes
+    """
+    return render_template('6-number_odd_or_even.html', n=n)
 
 
 if __name__ == "__main__":
