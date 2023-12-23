@@ -20,6 +20,7 @@ def hello():
     """ This is a function that return Hello HBNB!"""
     return "Hello HBNB!"
 
+
 @app.route("/hbnb", strict_slashes=False)
 def hbnb():
     """ This is a function that return HBNB!"""
