@@ -1,41 +1,35 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
-
-import os
+""" holds class State"""
+import models
 from models.base_model import BaseModel, Base
-# from models.city import City
-from sqlalchemy import Column, String, Integer, ForeignKey
+from os import getenv
+import sqlalchemy
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
 class State(BaseModel, Base):
-    """ State class """
-    
-    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-        from models.city import City
-        
-        __tablename__ = "states"
-        name = Column(
-            String(128),
-            nullable=False)
-        
-        cities = relationship(
-            "City",
-            backref="state",
-            cascade="all, delete")
+    """Representation of state """
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = 'states'
+        name = Column(String(128),
+                      nullable=False)
+        cities = relationship("City", cascade="all, delete",
+                              backref="states")
     else:
         name = ""
-        
+
+    def __init__(self, *args, **kwargs):
+        """initializes state"""
+        super().__init__(*args, **kwargs)
+
+    if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def cities(self):
-            """ This is a method that return all cities with state
-            """
-            from models import storage
-            
-            listCities = []
-            for key, obj in storage.all().items():
-                if "City" in key:
-                    if obj.state_id == self.id:
-                        listCities.append(obj)
-
-            return listCities
+            """fs getter attribute that returns City instances"""
+            values_city = models.storage.all("City").values()
+            list_city = []
+            for city in values_city:
+                if city.state_id == self.id:
+                    list_city.append(city)
+            return list_city

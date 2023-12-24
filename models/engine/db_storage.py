@@ -1,101 +1,103 @@
 #!/usr/bin/python3
-
-""" This module define a class to mange the database storage for hbnb clone"""
+"""Database storage engine using SQLAlchemy with a mysql+mysqldb database
+connection.
+"""
 
 import os
 from models.base_model import Base
-from models.user import User
-from models.state import State
+from models.amenity import Amenity
 from models.city import City
 from models.place import Place
-from models.amenity import Amenity
+from models.state import State
 from models.review import Review
+from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
+name2class = {
+    'Amenity': Amenity,
+    'City': City,
+    'Place': Place,
+    'State': State,
+    'Review': Review,
+    'User': User
+}
 
 
 class DBStorage:
-    """ This is a class Database storage using mysql db and sqlalchemy module"""
-    
-    __session = None
+    """Database Storage"""
     __engine = None
-    __objects = {}
-    
-    classList = [User, State, City, Place, Amenity, Review]
-    
+    __session = None
+
     def __init__(self):
-        """ This is a method that initialze the engine """
-        
-        dialect = "mysql"
-        drived = "mysqldb"
-        host = os.getenv("HBNB_MYSQL_HOST", default="localhost")
-        user = os.getenv("HBNB_MYSQL_USER", default="hbnb_dev")
-        password = os.getenv("HBNB_MYSQL_PWD", default="hbnb_dev_pwd")
-        database = os.getenv("HBNB_MYSQL_DB", default="hbnb_dev_db")
-        is_test = os.getenv("HBNB_ENV")
-        
-        self.__engine = create_engine('{}+{}://{}:{}@{}/{}'.format(
-            dialect,
-            drived,
-            user,
-            password,
-            host,
-            database),
-            pool_pre_ping=True
-        )
-        
-        if is_test == "test":
+        """Initializes the object"""
+        user = os.getenv('HBNB_MYSQL_USER')
+        passwd = os.getenv('HBNB_MYSQL_PWD')
+        host = os.getenv('HBNB_MYSQL_HOST')
+        database = os.getenv('HBNB_MYSQL_DB')
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(user, passwd, host, database))
+        if os.getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
-            
+
     def all(self, cls=None):
-        """ This is a session that quaries the current db session """
-        
-        self.__objects = {}
-        if cls is not None:
-            if type(cls) is str:
-                cls = eval(cls)
-            qury = self.__session.query(cls)
-            for obj in qury:
-                key = '{}.{}'.format(
-                    obj.__class__.__name__,
-                    obj.id)
-                self.__objects[key] = obj
+        """returns a dictionary of all the objects present"""
+        if not self.__session:
+            self.reload()
+        objects = {}
+        if type(cls) == str:
+            cls = name2class.get(cls, None)
+        if cls:
+            for obj in self.__session.query(cls):
+                objects[obj.__class__.__name__ + '.' + obj.id] = obj
         else:
-            for cla in self.classList:
-                qury = self.__session.query(cla)
-                for obj in qury:
-                    key = "{}.{}".format(
-                        obj.__class__.__name__,
-                        obj.id)
-                    self.__objects[key] = obj
-                    
-        return self.__objects
-    
-    def new(self, obj):
-        """This method add an object to the current db session"""
-        
-        self.__session.add(obj)
-        
-    def delete(self, obj=None):
-        """ This is a method that delete from the current db session """
-        
-        if obj is not None:
-            self.__session.delete(obj)
-            
-    def save(self):
-        """ This is a method that save(commit) the changes"""
-        
-        self.__session.commit()
-        
+            for cls in name2class.values():
+                for obj in self.__session.query(cls):
+                    objects[obj.__class__.__name__ + '.' + obj.id] = obj
+        return objects
+
     def reload(self):
-        """This is a method that reload the session """
-        
+        """reloads objects from the database"""
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Base.metadata.create_all(self.__engine)
-        sess = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scoped_session(sess)
-        self.__session = Session()
-        
+        self.__session = scoped_session(session_factory)
+
+    def new(self, obj):
+        """creates a new object"""
+        self.__session.add(obj)
+
+    def save(self):
+        """saves the current session"""
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        """deletes an object"""
+        if not self.__session:
+            self.reload()
+        if obj:
+            self.__session.delete(obj)
+
     def close(self):
-        """ This is a method that close the current session"""
-        
-        self.__session.close()
+        """Dispose of current session if active"""
+        self.__session.remove()
+
+    def get(self, cls, id):
+        """Retrieve an object"""
+        if cls is not None and type(cls) is str and id is not None and\
+           type(id) is str and cls in name2class:
+            cls = name2class[cls]
+            result = self.__session.query(cls).filter(cls.id == id).first()
+            return result
+        else:
+            return None
+
+    def count(self, cls=None):
+        """Count number of objects in storage"""
+        total = 0
+        if type(cls) == str and cls in name2class:
+            cls = name2class[cls]
+            total = self.__session.query(cls).count()
+        elif cls is None:
+            for cls in name2class.values():
+                total += self.__session.query(cls).count()
+        return total
